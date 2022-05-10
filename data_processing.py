@@ -42,11 +42,11 @@ temp_ts["date_time"]= temp_ts["date"]+pd.to_timedelta(temp_ts.hour-1, unit='h')
 #Adding previous load/temperature effects
 print("Adding previous load/temperature effects...")
 for k in range(1,13):
-    temp_ts["temperature_{}".format(k)]=temp_ts.groupby("station_id").shift().temperature
-    load_ts["load_{}".format(k)]=load_ts.groupby("zone_id").shift().load
+    temp_ts["temperature_{}".format(k)]=temp_ts.groupby("station_id").shift(k).temperature
+    load_ts["load_{}".format(k)]=load_ts.groupby("zone_id").shift(k).load
     
 for k in [24,48]:
-    load_ts["load_{}".format(k)]=load_ts.groupby("zone_id").shift().load    
+    load_ts["load_{}".format(k)]=load_ts.groupby("zone_id").shift(k).load    
 
 load_ts["load_max_24"]=load_ts.groupby("zone_id").shift(1).load.rolling(24).max()
 load_ts["load_min_24"]=load_ts.groupby("zone_id").shift(1).load.rolling(24).min()
