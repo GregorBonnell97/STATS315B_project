@@ -77,7 +77,7 @@ keys=["zone_id","station_id","hour","date"]
 target=["load"]
 calendar_effect=["cos_time","sin_time","Monday","Tuesday","Wedesday","Thursday","Friday","Saturday","Sunday"]
 previous_demand_effect=["load_{}".format(i) for i in range(1,13)]+["load_24","load_48","load_max_24","load_min_24","load_avg_168"]
-temperature_effect=["temperature"]+["temperature_{}".format(i) for i in range(1,13)]+["temp_max_24","temp_min_24","temp_max_24_48","temp_max_24_48","temp_min_24_48","temp_avg_24","temp_avg_24","temp_avg_24_48","temp_avg_168"]
+temperature_effect=["temperature"]+["temperature_{}".format(i) for i in range(1,13)]+["temp_max_24","temp_min_24","temp_max_24_48","temp_min_24_48","temp_avg_24","temp_avg_24_48","temp_avg_168"]
 
 columns=keys+target+calendar_effect+previous_demand_effect+temperature_effect
 
