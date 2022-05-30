@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from pspline import PSplineRegressor
+from multiprocessing import Pool
 
 class CWGradientBoosting(object):
     
@@ -20,15 +21,27 @@ class CWGradientBoosting(object):
         self.psp=PSplineRegressor(Lambda=Lambda) # deg = 3 by default
         self.verbose=verbose
     
+
     def train(self,x):
         u=self.Y_train-self.train_estimator
         a,pred,t=self.psp.fit(x,u)
         train_error=np.sum((u-pred)*(u-pred))
         return a,pred,train_error,t
     
+
     def run_step(self):
         best_a,best_pred,best_train_error,best_t,best_i=None,None,1e100,None,None
-        for i in range(self.X_train.shape[1]):
+        # DOES NOT work. AssertionError: daemonic processes are not allowed to have children
+        #l = [self.X_train[:,i] for i in range(self.X_train.shape[1])]
+        #with Pool(len(l)+1) as p:
+        #    U = p.map(self.train, l)
+        #print("U =", U)
+        #V = [U[i][2] for i in range(len(l))]
+        #index = np.argmin(V)
+        # best_a,best_pred,best_train_error,best_t,best_i=U[index],index
+
+        for i in range(self.X_train.shape[1]): # goal: get best?
+            # print("here ! self.X_train.shape[1] =", self.X_train.shape[1]) --> 47
             x=self.X_train[:,i]
             a,pred,train_error,t=self.train(x)
             if train_error<best_train_error:
@@ -46,10 +59,10 @@ class CWGradientBoosting(object):
         self.step+=1
         
     
-    def gradient_boosting(self): # to be parallelized
-        for m in range(self.M+1):
+    def gradient_boosting(self):   # cannot be parallelized
+        for _ in range(self.M+1):  # sequential steps
             self.run_step()
-        print("Done!")
+        print("gradient boosting in cwgradient.py done!")
         
         
     def print_error(self):
