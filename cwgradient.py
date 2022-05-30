@@ -5,7 +5,7 @@ from multiprocessing import Pool
 
 class CWGradientBoosting(object):
     
-    def __init__(self,X_train,X_val,X_test,Y_train,Y_val,Y_test,v,M,Lambda,verbose=False):
+    def __init__(self,X_train,X_val,X_test,Y_train,Y_val,Y_test,v,M,Lambda,verbose=False,features_names="features.txt"):
         self.X_train=X_train
         self.X_val=X_val
         self.X_test=X_test
@@ -20,6 +20,17 @@ class CWGradientBoosting(object):
         self.step=0
         self.psp=PSplineRegressor(Lambda=Lambda) # deg = 3 by default
         self.verbose=verbose
+        self.features_count,self.features_list=self.init_variable_count(features_names)
+        
+    
+    def init_variable_count(self,features_names):
+        f=open(features_names,"r+")
+        l=f.readlines()
+        l=[s.strip() for s in l]
+        output={}
+        for x in l:
+            output[x]=0
+        return output,l
     
 
     def train(self,x):
@@ -57,6 +68,7 @@ class CWGradientBoosting(object):
         if self.step%10==0 and self.verbose:
             self.print_error()
         self.step+=1
+        self.features_count[self.features_list[best_i]]+=1
         
     
     def gradient_boosting(self):   # cannot be parallelized

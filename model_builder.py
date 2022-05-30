@@ -11,6 +11,9 @@ if len(sys.argv)!=3:
 zone=int(sys.argv[1])
 M=int(sys.argv[2])
 
+if not os.path.isdir("./important_features"):
+    os.mkdir("./important_features")
+
 def processing(spacetime):
     station, hour = spacetime[0], spacetime[1]
     print("Now processing station {} and hour {} ...".format(station,hour))
@@ -37,6 +40,11 @@ def processing(spacetime):
     f.close()
     val.to_csv("val_pred/pred_{}_{}_{}.csv".format(zone,station,hour))
     test.to_csv("test_pred/pred_{}_{}_{}.csv".format(zone,station,hour))
+    
+    f=open("important_features/{}_{}_{}.txt".format(zone,station,hour),"w+")
+    for x in cwg.features_count:
+        f.write("{}:{}\n".format(x,cwg.features_count[x]))
+    f.close()
 
 
 if __name__ == "__main__":
