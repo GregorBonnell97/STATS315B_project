@@ -43,8 +43,8 @@ if __name__ == "__main__":
 
     l = []
     # don t ask too much to your RAM
-    for station in range(1,12):  # 1-> 12
-        for hour in range(6,12):  # 1 -> 24
+    for station in range(1,2):  # 1-> 12
+        for hour in range(18,19):  # 1 -> 24
             l.append([station, hour])
 
     if not os.path.exists("val_errors"):
@@ -56,4 +56,4 @@ if __name__ == "__main__":
 
     with Pool(len(l)+1) as p:
         print(p.map(processing, l))
-        
+

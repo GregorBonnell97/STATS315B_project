@@ -15,7 +15,10 @@ class PSplineRegressor(object):
     
     def B(self, x, k, i, t):
         """
-        to be commented
+        t: nodes of the graph
+        k: degrees of the spline
+        x: variable (array)
+        i: index of the chunk
         """
         if k == 0:
             return np.where(np.abs(x-0.5*(t[i]+t[i+1]))<0.5*(t[i+1]-t[i]),1,0)
