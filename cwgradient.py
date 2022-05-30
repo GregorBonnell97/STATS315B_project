@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun May  8 16:16:39 2022
-
-@author: Gregor
-"""
-
 import numpy as np
 import pandas as pd
 from pspline import PSplineRegressor
@@ -24,7 +17,7 @@ class CWGradientBoosting(object):
         self.val_estimator=np.zeros(Y_val.size)
         self.test_estimator=np.zeros(Y_test.size)
         self.step=0
-        self.psp=PSplineRegressor(Lambda=Lambda)
+        self.psp=PSplineRegressor(Lambda=Lambda) # deg = 3 by default
         self.verbose=verbose
     
     def train(self,x):
@@ -48,13 +41,12 @@ class CWGradientBoosting(object):
             self.train_estimator+=self.v*best_pred
             self.val_estimator+=self.v*self.psp.predict(self.X_val[:,best_i],best_t,best_a)
             self.test_estimator+=self.v*self.psp.predict(self.X_test[:,best_i],best_t,best_a)
-        
         if self.step%10==0 and self.verbose:
             self.print_error()
         self.step+=1
         
     
-    def gradient_boosting(self):
+    def gradient_boosting(self): # to be parallelized
         for m in range(self.M+1):
             self.run_step()
         print("Done!")
@@ -72,6 +64,7 @@ class CWGradientBoosting(object):
 
 
 if __name__=="__main__":
+
     data=pd.read_csv("formatted_data/formatted_data_2_5_21.csv")
     Y=data.load.values
     data.drop(columns=["Unnamed: 0","zone_id","station_id","hour","date","load","temp_max_24_48.1","temp_avg_24.1"],inplace=True)
@@ -82,7 +75,4 @@ if __name__=="__main__":
     print(np.mean(Y_test),np.mean(Y_val),np.mean(Y_train))
     cwg=CWGradientBoosting(X_train,X_val,X_test,Y_train,Y_val,Y_test,0.15,500,10,True)
     cwg.gradient_boosting()
-    
-    
-    
-    
+

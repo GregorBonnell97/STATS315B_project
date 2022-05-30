@@ -1,12 +1,14 @@
-# -*- coding: utf-8 -*-
 """
-Created on Fri May  6 15:15:37 2022
+First script to be run.
 
-@author: Gregor
+- creates a subfolder called formatted_data
+- load the original data from subfolder Data and process it
+- append the formatted data - used later in the project - in formatted_data
 """
 
 import numpy as np
 import pandas as pd
+import os
 
 temperature=pd.read_csv("Data/temperature_history.csv",parse_dates=[["year","month","day"]])
 load=pd.read_csv("Data/Load_history.csv",parse_dates=[["year","month","day"]],thousands=",")
@@ -72,7 +74,7 @@ load_ts["cos_time"]=np.cos(load_ts.days_delta*2*np.pi/365)
 load_ts["sin_time"]=np.cos(load_ts.days_delta*2*np.pi/365)
 
 
-print("Mergind temp and load data...")
+print("Merging temp and load data...")
 keys=["zone_id","station_id","hour","date"]
 target=["load"]
 calendar_effect=["cos_time","sin_time","Monday","Tuesday","Wedesday","Thursday","Friday","Saturday","Sunday"]
@@ -80,6 +82,8 @@ previous_demand_effect=["load_{}".format(i) for i in range(1,13)]+["load_24","lo
 temperature_effect=["temperature"]+["temperature_{}".format(i) for i in range(1,13)]+["temp_max_24","temp_min_24","temp_max_24_48","temp_min_24_48","temp_avg_24","temp_avg_24_48","temp_avg_168"]
 
 columns=keys+target+calendar_effect+previous_demand_effect+temperature_effect
+
+os.mkdir("./formatted_data")
 
 for zone in range(1,21):
     for station in range(1,12):
@@ -90,5 +94,6 @@ for zone in range(1,21):
             local_output=local_load_ts.join(other=local_temp_ts,how="left",on=["date","hour"])
             local_output=local_output[columns]
             local_output.dropna(inplace=True)
+
             local_output.to_csv("formatted_data/formatted_data_{}_{}_{}.csv".format(zone,station,hour))
             
