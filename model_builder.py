@@ -35,14 +35,14 @@ def processing(spacetime):
     test=pd.DataFrame(data={"date":dates[-70:], "hour":hours[-70:],"pred":cwg.test_estimator, "values":Y_test})
     val_error=np.sum((cwg.val_estimator-Y_val)**2)/1e06
 
-    f=open("val_errors/{}_{}_{}.txt".format(zone,station,hour), "w+") 
+    f=open("val_errors/{}_{}_{}_{}_{}.txt".format(M,zone,Lambda,station,hour), "w+") 
     # creates file if it doesn t already exist, otherwise overwrite 
     f.write(str(val_error))
     f.close()
-    val.to_csv("val_pred/pred_{}_{}_{}.csv".format(zone,station,hour))
-    test.to_csv("test_pred/pred_{}_{}_{}.csv".format(zone,station,hour))
+    val.to_csv("val_pred/pred_{}_{}_{}_{}_{}.csv".format(M,zone,Lambda,station,hour))
+    test.to_csv("test_pred/pred_{}_{}_{}_{}_{}.csv".format(M,zone,Lambda,station,hour))
     
-    f=open("important_features/{}_{}_{}.txt".format(zone,station,hour),"w+")
+    f=open("important_features/{}_{}_{}_{}_{}.txt".format(M,zone,Lambda,station,hour),"w+")
     for x in cwg.features_count:
         f.write("{}:{}\n".format(x,cwg.features_count[x]))
     f.close()
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     print("HERE", len(l))
 
     # with Pool(len(l)+1) as p:
-    with closing(Pool(50)) as p:  # 100? 1000?
+    with closing(Pool(100)) as p:  # 100? 1000?
         print(p.map(processing, l))
         p.terminate()
 
