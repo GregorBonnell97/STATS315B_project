@@ -85,6 +85,8 @@ columns=keys+target+calendar_effect+previous_demand_effect+temperature_effect
 
 os.mkdir("./formatted_data")
 
+print("done 1")
+
 for zone in range(1,21):
     for station in range(1,12):
         for hour in range(1,25):
@@ -98,3 +100,4 @@ for zone in range(1,21):
 
             local_output.to_csv("formatted_data/formatted_data_{}_{}_{}.csv".format(zone,station,hour))
             
+    print("zone i done")
