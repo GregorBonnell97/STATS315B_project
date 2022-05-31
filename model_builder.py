@@ -68,6 +68,7 @@ if __name__ == "__main__":
     print("HERE", len(l))
 
     # with Pool(len(l)+1) as p:
-    with Pool(5) as p:  # 100? 1000?
+    with Pool(50) as p:  # 100? 1000?
         print(p.map(processing, l))
+        p.terminate()
 
