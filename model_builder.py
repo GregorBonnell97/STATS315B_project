@@ -5,17 +5,17 @@ from cwgradient import CWGradientBoosting
 from multiprocessing import Pool
 import os
 
-if len(sys.argv)!=3:
-    print("Please run scripts with following arguments:\n-zone\n-M")
+#if len(sys.argv)!=3:
+#    print("Please run scripts with following arguments:\n-zone\n-M")
     
-zone=int(sys.argv[1])
-M=int(sys.argv[2])
+#zone=int(sys.argv[1])
+#M=int(sys.argv[2])
 
 if not os.path.isdir("./important_features"):
     os.mkdir("./important_features")
 
 def processing(spacetime):
-    station, hour = spacetime[0], spacetime[1]
+    M, zone, Lambda, station, hour = spacetime[0], spacetime[1], spacetime[2], spacetime[3], spacetime[4]
     print("Now processing station {} and hour {} ...".format(station,hour))
     data=pd.read_csv("formatted_data/formatted_data_{}_{}_{}.csv".format(zone,station,hour))
     Y=data.load.values
@@ -28,7 +28,7 @@ def processing(spacetime):
     X=data.values
     Y_train,Y_val,Y_test=Y[:-140],Y[-140:-70],Y[-70:]
     X_train,X_val,X_test=X[:-140],X[-140:-70],X[-70:]
-    cwg=CWGradientBoosting(X_train,X_val,X_test,Y_train,Y_val,Y_test,0.15,M,10,False)
+    cwg=CWGradientBoosting(X_train,X_val,X_test,Y_train,Y_val,Y_test,0.15,M,Lambda,False)
     cwg.gradient_boosting()
     val=pd.DataFrame(data={"date":dates[-140:-70],"hour":hours[-140:-70],"pred":cwg.val_estimator,"values":Y_val})
     test=pd.DataFrame(data={"date":dates[-70:], "hour":hours[-70:],"pred":cwg.test_estimator, "values":Y_test})
@@ -51,9 +51,12 @@ if __name__ == "__main__":
 
     l = []
     # don t ask too much to your RAM
-    for station in range(1,2):  # 1-> 12
-        for hour in range(18,19):  # 1 -> 24
-            l.append([station, hour])
+    for M in [20,50,100,200]:
+        for zone in [4,9,13]:
+            for Lambda in [0, 0.1, 1, 5]:
+                for station in range(1,12):  # 1-> 12
+                    for hour in range(1,25):  # 1 -> 24
+                        l.append([M, zone, Lambda, station, hour])
 
     if not os.path.exists("val_errors"):
         os.mkdir("val_errors")
@@ -62,6 +65,9 @@ if __name__ == "__main__":
     if not os.path.exists("test_pred"):
         os.mkdir("test_pred")
 
-    with Pool(len(l)+1) as p:
+    print("HERE", len(l))
+
+    # with Pool(len(l)+1) as p:
+    with Pool(5) as p:  # 100? 1000?
         print(p.map(processing, l))
 
