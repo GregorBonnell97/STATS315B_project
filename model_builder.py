@@ -46,6 +46,7 @@ def processing(spacetime):
     for x in cwg.features_count:
         f.write("{}:{}\n".format(x,cwg.features_count[x]))
     f.close()
+    print("processing done!")
 
 
 if __name__ == "__main__":
