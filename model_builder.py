@@ -4,6 +4,7 @@ import pandas as pd
 from cwgradient import CWGradientBoosting
 from multiprocessing import Pool
 import os
+from contextlib import closing
 
 #if len(sys.argv)!=3:
 #    print("Please run scripts with following arguments:\n-zone\n-M")
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     print("HERE", len(l))
 
     # with Pool(len(l)+1) as p:
-    with Pool(50) as p:  # 100? 1000?
+    with closing(Pool(50)) as p:  # 100? 1000?
         print(p.map(processing, l))
         p.terminate()
 
