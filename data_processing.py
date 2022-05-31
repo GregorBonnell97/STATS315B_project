@@ -90,7 +90,8 @@ for zone in range(1,21):
         for hour in range(1,25):
             local_load_ts=load_ts[(load_ts.zone_id==zone)&(load_ts.hour==hour)]
             local_temp_ts=temp_ts[(temp_ts.station_id==station)&(temp_ts.hour==hour)].groupby(["date","hour"]).first()
-            local_temp_ts.drop(axis=1,columns=["date_time"],inplace=True)
+            # local_temp_ts.drop(axis=1,columns=["date_time"],inplace=True)
+            local_temp_ts.drop(["date_time"], axis=1, inplace=True) # for old versions of pandas
             local_output=local_load_ts.join(other=local_temp_ts,how="left",on=["date","hour"])
             local_output=local_output[columns]
             local_output.dropna(inplace=True)
