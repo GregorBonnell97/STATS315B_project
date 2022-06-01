@@ -53,8 +53,8 @@ if __name__ == "__main__":
 
     l = []
     # don t ask too much to your RAM
-    for M in [20,50,100,200]:
-        for zone in [4,9,13]:
+    for M in [20,50,100]:
+        for zone in [4]:
             for Lambda in [0, 0.1, 1, 5]:
                 for station in range(1,12):  # 1-> 12
                     for hour in range(1,25):  # 1 -> 24
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     print("HERE", len(l))
 
     # with Pool(len(l)+1) as p:
-    with closing(Pool(100)) as p:  # 100? 1000?
+    with closing(Pool(1000)) as p:  # 100? 1000?
         print(p.map(processing, l))
         p.terminate()
 
